@@ -1,0 +1,351 @@
+---
+title: "comis"
+subtitle: "An R Package to Read CCCCO MIS Files"
+author: |
+    | Christian Million
+    | Data Analyst
+footer: "Pier to Pier | 2022-08-25"
+institute: "Yosemite Community College District"
+format:
+  revealjs: 
+    theme: simple
+    output-file: "docs/index.html"
+    self-contained: true
+output-dir: "docs"
+email-obfuscation: javascript
+code-line-numbers: false
+small: true
+width: 1200
+---
+
+---
+
+![](img/pirate_joke.jpg){fig-align="center"}
+
+## Goals
+
+**Main Goal:** Showcase benefits of developing internal tools with R.
+
+- A case study using `comis`
+
+## What is `comis`?
+
+::: columns 
+::: {.column .incremental}
+An internally developed R package that helps:
+
+-   Read MIS Submission Files
+
+-   Read MIS Referential Files
+
+-   Reduces cognitive overhead
+
+-   Gets us to analysis faster and more confidently
+:::
+
+:::column
+```r
+library(comis)
+
+CB <- read_ref("path/to/CB223.txt")
+```
+:::
+
+:::
+
+## MIS 101 - Submission Files
+
+::: columns
+::: column
+Every term, someone at your college converts SIS data into `.DAT` files, using the file specs found in the [Data Element Dictionary](https://webdata.cccco.edu/ded/ded.htm).
+
+These are `submission` files.
+:::
+
+::: column
+![](img/sub_file_dir.png)
+![](img/sub_file_example.png)
+:::
+:::
+
+
+## MIS 101 - Referential Files
+
+::: columns
+
+::: column
+After submission, colleges request `referential` files from the CCCCO.
+
+
+These contain elements derived from submission files, explicit formatting, and additional student information.
+:::
+
+::: column
+![](img/ref_file_dir.png)
+![](img/ref_file_example.png)
+:::
+:::
+
+## Submission Files
+
+:::: columns
+::: column
+-   25 files | 396 elements
+
+-   Fixed Width Format
+
+-   No Column Names
+
+-   Numbers that should be characters / dates
+
+-   Missing values (`NA`)
+
+-   Trailing white space
+
+-   Implied decimal points
+:::
+
+::: column
+![](img/ded_screenshot.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+![](img/sb_elements.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+![](img/sub_fwf.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+![](img/sub_file_example.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+![](img/num_as_char.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+![](img/num_as_date.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+![](img/trailing_white_space.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+![](img/implied_decimal.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+:::
+::::
+
+## Referential Files
+
+-   27 files | 406 elements
+
+-   Tab Delimited
+
+-   No Column Names
+
+-   Numbers that should be characters / dates
+
+-   Missing values (`NA`)
+
+-   Trailing white space
+
+-   ~~Implied decimal points~~
+
+-   *Different date format than submission file.*
+
+---
+
+![](img/confused.jpg){fig-align="center"}
+
+## Yikes
+
+-   A lot to re-remember
+
+-   Cognitively taxing to implement
+
+-   Takes time
+
+-   Updates to multiple scripts
+
+-   Copy / paste errors
+
+-   Makes scripts more difficult to read
+
+-   Unfulfilling
+
+-   Lots of overhead before analysis can begin
+
+## Before `comis`
+
+``` r
+library(dplyr)
+library(readr)
+
+CB_col_names <- c('GI90', 'GI01','GI03', paste0("CB0",0:9), paste0("CB",10:27), "Filler")
+CB_col_types <- rep("c", length(CB_col_names))
+CB_col_width <- CB <- c(2,3,3,12,12,68,6,1,1,length(109:112),length(113:116),1,1,1,1,1,1,6,8,length(137:148),length(149:160),length(161:172),7,9,1,1,1,1,1,1,1,26)
+
+XB_col_names <- c('GI90', 'GI01', 'GI03', 'GI02', 'CB01', paste0('XB0',0:9), 'XB10', 'XB11', 'XB12', 'CB00', 'Filler')
+XB_col_types <- rep("c", length(XB_col_names))
+XB_col_width <- c(2,3,3,3,12,6,1,6,6,1,length(44:47), length(48:51),1,1,1,1,length(56:61), 1, 12,7)
+
+CB_src <- readr::read_tsv("path/to/U59223CB.dat",
+                           col_names = CB_col_names,
+                           col_types = CB_col_types,
+                           trim_ws = TRUE)
+                           
+XB_src <- readr::read_tsv("path/to/U59223XB.dat",
+                           col_names = CB_col_names, # copy / paste errors
+                           col_types = XB_col_types,
+                           trim_ws = TRUE)
+
+CB <- CB_src |>
+    mutate(dates = date_cleaning_code(),
+           units = implicit_decimal_code())
+           
+XB <- XB_src |>
+    mutate(dates = date_cleaning_code(),
+           units = implicit_decimal_code())
+```
+
+---
+
+![](img/ew.jpg){fig-align="center"}
+
+## After `comis` {.incremental}
+
+``` r
+library(comis)
+
+CB <- read_sub("path/to/U59223CB.dat")
+XB <- read_sub("path/to/U59223XB.dat")
+```
+
+---
+
+![](img/geordi.jpg){fig-align="center"}
+
+## Benefits {.incremental}
+
+-   Easier to tell what's happening
+
+-   Reduces cognitive overhead
+
+-   Documentation contained within the package
+
+-   Updates made in one spot (instead of throughout various scripts)
+
+-   **Shifts focus to what's important - Using the Data**
+
+---
+
+![](img/docs.png){fig-align="center"}
+
+## Additional Features
+
+::: columns
+::: {.column width="40%"}
+-   Contains useful data found on CCCCO websites
+
+-   Read many files at once
+
+-   Read from repo
+
+-   Use DED Name or Descriptive Name
+:::
+
+::: {.column width="60%"}
+
+:::{.fragment .fade-in-then-out .absolute top="25%" right="1%" width="55%"}
+```r
+library(dplyr)
+library(comis)
+
+read_ref_repo("CB", c("217", "223")) |>
+    left_join(top_codes, by = c("CB03" = "top_code")) |>
+    left_join(colleges, by = c("GI01")) |>
+    filter(vocational == "Y",
+           institution == "COLUMBIA") |>
+    head()
+```
+:::
+
+:::{.fragment .fade-in-then-out .absolute top="25%" right="1%" width="55%"}
+```r
+library(comis)
+
+# Reads many files of same "domain" at once
+read_sub(c("U59223CB.DAT", "U59217CB.DAT"))
+```
+:::
+
+:::{.fragment .fade-in-then-out .absolute top="25%" right="1%" width="55%"}
+```r
+library(comis)
+
+options(comis.repo.referential = "path/to/ref/repo/")
+
+read_ref_repo("CB", c("217", "223"))
+```
+:::
+
+:::{.fragment .fade-in-then-out .absolute top="25%" right="1%" width="55%"}
+```r
+library(comis)
+
+# Column names are DED Codes.
+# like "GI01", "CB00", "CB01."
+read_ref_repo("CB", "217")
+
+# Column names are words.
+# like "COLLEGE_ID", "COURSE_ID", "CONTROL_NUMBER"
+read_ref("CB", "217", desc = TRUE)
+```
+:::
+
+:::
+
+:::
+
+## Why Develop Internal R Tools / Packages?
+
+-   Addresses problems specific to the institution
+
+-   Reasonable defaults
+
+-   Abstracts common tasks
+
+-   Maintainable
+
+-   Share code with others
+
+::: aside
+Recommended Reading: [Building a Team of Internal R Packages](https://emilyriederer.netlify.app/post/team-of-packages/)
+:::
+
+## Other "Internal" R Tools
+
+::: columns
+
+::: column
+### Examples
+
+- [DisImpact](https://CRAN.R-project.org/package=DisImpact) *("internal" to CCCCO)*
+
+- yccdDB *(creates and manages DB connections / queries)*
+
+- hub *(.Rmd/.Qmd storage and usage monitoring)*
+:::
+
+::: column
+### Ideas
+
+-   yccdTemplates *(project / analysis / report templates)*
+
+-   yccdThemes *(branding graphs / reports)*
+
+-   yccdTerms *(help with term math / formatting)*
+:::
+
+::::
+
+# Thanks!
+
+## Contact
+
+<br>
+
+Christian Million
+
+Data Analyst
+
+Yosemite Community College District
+
+[millionc@yosemite.edu](mailto:millionc@yosemite.edu)
+
+::: aside
+Slides were created with [Quarto](https://quarto.org/) and can be found here: <https://christian-million.github.io/comis_presentation/>
+Source Code: <https://github.com/christian-million/comis_presentation>
+:::
