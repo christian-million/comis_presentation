@@ -22,35 +22,78 @@ width: 1200
 
 ![](img/pirate_joke.jpg){fig-align="center"}
 
+::: notes
+I'm starting us off today with a dive into the thrilling topic of MIS data types and formats,
+so we're gonna need some humor throughout.
+:::
+
 ## Goals
 
-**Main Goal:** Showcase benefits of developing internal tools with R.
+### Main Goal
 
-- A case study using `comis`
+- Showcase benefits of developing internal packages with R.
 
-## What is `comis`?
+::: columns
+::: column
+### Along the way...
 
-::: columns 
-::: {.column .incremental}
-An internally developed R package that helps:
+- Inspire!
 
--   Read MIS Submission Files
+- Use `comis` as a motivating example
 
--   Read MIS Referential Files
+- Why is package development worthwhile?
 
--   Reduces cognitive overhead
-
--   Gets us to analysis faster and more confidently
+- Learn **too** much about MIS files.
 :::
 
 :::column
 ```r
 library(comis)
 
+# Read Referential File
 CB <- read_ref("path/to/CB223.txt")
+
+# Read Submission File
+XB <- read_sub("path/to/U59217XB.DAT")
 ```
 :::
+:::
 
+::: notes
+Understand why these three lines of code are so beautiful to me.
+:::
+
+## What is `comis`?
+
+An internally developed R package
+
+::: columns 
+::: {.column .incremental}
+
+### Purpose
+
+Read and Format:
+
+- MIS __Submission__ Files
+
+- MIS __Referential__ Files
+
+:::
+
+
+
+:::
+
+# MIS Data: What and Why?
+
+::: notes
+-   What are MIS files?
+
+-   Why are they useful?
+
+-   What about MIS files requires a dedicated package?
+
+-   MIS 101 - In order to better understand our specific institutions needs, we need a very brief intro to MIS
 :::
 
 ## MIS 101 - Submission Files
@@ -86,11 +129,39 @@ These contain elements derived from submission files, explicit formatting, and a
 :::
 :::
 
-## Submission Files
+## MIS is Important Data
+
+We want to analyze it!
+
+### Uses
+
+- Monitoring Student Success and Equity
+
+- Accountability
+    
+- Categorical Funding (EOPS, DSPS, Perkins, ...)
+
+- Student Centered Funding Formula
+
+- Research
+
+- ...
+
+::: notes
+-   These are just some of the uses. We want to analyze it!
+
+-   In order to use the data, we need to get into an analysis tool.
+
+-   Whether that's R / Excel / STATA / SPSS
+:::
+
+# The Challenge
+
+## Submission Files - Challenges
 
 :::: columns
 ::: column
--   25 files | 396 elements
+-   ~ 25 files | 396 elements
 
 -   Fixed Width Format
 
@@ -106,10 +177,11 @@ These contain elements derived from submission files, explicit formatting, and a
 :::
 
 ::: column
-![](img/ded_screenshot.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
-![](img/sb_elements.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
-![](img/sub_fwf.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+
 ![](img/sub_file_example.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+![](img/fwf.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
+
+![](img/sub_fwf.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
 ![](img/num_as_char.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
 ![](img/num_as_date.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
 ![](img/trailing_white_space.png){.fragment .fade-in-then-out .absolute top="25%" right="1%" width="50%"}
@@ -117,11 +189,11 @@ These contain elements derived from submission files, explicit formatting, and a
 :::
 ::::
 
-## Referential Files
+## Referential Files - Challenges
 
--   27 files | 406 elements
+-   ~ 27 files | 406 elements
 
--   Tab Delimited
+-   Tab Delimited :)
 
 -   No Column Names
 
@@ -157,6 +229,10 @@ These contain elements derived from submission files, explicit formatting, and a
 
 -   Lots of overhead before analysis can begin
 
+::: notes
+If you were to try to read in just two MIS submission files, it would look like this:
+:::
+
 ## Before `comis`
 
 ``` r
@@ -190,6 +266,10 @@ XB <- XB_src |>
            units = implicit_decimal_code())
 ```
 
+::: notes
+You don't need to understand this code that doesn't run - what's important is that it's ugly and overwhelming
+:::
+
 ---
 
 ![](img/ew.jpg){fig-align="center"}
@@ -203,25 +283,15 @@ CB <- read_sub("path/to/U59223CB.dat")
 XB <- read_sub("path/to/U59223XB.dat")
 ```
 
+::: notes
+- So much easier to tell what's happening
+
+- Sit here and take a breath
+:::
+
 ---
 
 ![](img/geordi.jpg){fig-align="center"}
-
-## Benefits {.incremental}
-
--   Easier to tell what's happening
-
--   Reduces cognitive overhead
-
--   Documentation contained within the package
-
--   Updates made in one spot (instead of throughout various scripts)
-
--   **Shifts focus to what's important - Using the Data**
-
----
-
-![](img/docs.png){fig-align="center"}
 
 ## Additional Features
 
@@ -247,8 +317,7 @@ read_ref_repo("CB", c("217", "223")) |>
     left_join(top_codes, by = c("CB03" = "top_code")) |>
     left_join(colleges, by = c("GI01")) |>
     filter(vocational == "Y",
-           institution == "COLUMBIA") |>
-    head()
+           institution == "COLUMBIA")
 ```
 :::
 
@@ -258,6 +327,9 @@ library(comis)
 
 # Reads many files of same "domain" at once
 read_sub(c("U59223CB.DAT", "U59217CB.DAT"))
+
+
+read_ref(c("CB217.txt", "CB223.DAT"))
 ```
 :::
 
@@ -265,6 +337,7 @@ read_sub(c("U59223CB.DAT", "U59217CB.DAT"))
 ```r
 library(comis)
 
+# Set in .Rprofile or .Renviron
 options(comis.repo.referential = "path/to/ref/repo/")
 
 read_ref_repo("CB", c("217", "223"))
@@ -276,7 +349,7 @@ read_ref_repo("CB", c("217", "223"))
 library(comis)
 
 # Column names are DED Codes.
-# like "GI01", "CB00", "CB01."
+# like "GI01", "CB00", "CB01"
 read_ref_repo("CB", "217")
 
 # Column names are words.
@@ -289,7 +362,31 @@ read_ref("CB", "217", desc = TRUE)
 
 :::
 
-## Why Develop Internal R Tools / Packages?
+
+::: aside
+Data Included: [top_codes](https://www.cccco.edu/-/media/CCCCO-Website/About-Us/Divisions/Educational-Services-and-Support/Academic-Affairs/What-we-do/Curriculum-and-Instruction-Unit/Files/TOPmanual6200909corrected12513pdf.pdf?la=en&hash=DE2CA320687E733C50F5EA30A6D29C5AC583D2B4), [colleges](https://webdata.cccco.edu/ded/DistrictCollegeCodes.pdf), [counties](https://webdata.cccco.edu/ded/CountyCodes.pdf), [states](https://webdata.cccco.edu/ded/StatePosessionCodes.pdf), [terms](https://webdata.cccco.edu/ded/gi/gi03.pdf)
+
+:::
+
+---
+
+![](img/docs.png){fig-align="center"}
+
+## Benefits of `comis` {.incremental}
+
+-   Easier to tell what's happening
+
+-   Reduces cognitive overhead
+
+-   Get to analysis faster and with more confidence
+
+-   Documentation contained within the package
+
+-   Updates made in one spot (instead of throughout various scripts)
+
+-   **Shifts focus to what's important - Using the Data**
+
+## Why Develop Internal R Packages?
 
 -   Addresses problems specific to the institution
 
@@ -301,11 +398,13 @@ read_ref("CB", "217", desc = TRUE)
 
 -   Share code with others
 
+-   Documentation / Vignettes
+
 ::: aside
 Recommended Reading: [Building a Team of Internal R Packages](https://emilyriederer.netlify.app/post/team-of-packages/)
 :::
 
-## Other "Internal" R Tools
+## Other "Internal" R Packages
 
 ::: columns
 
@@ -321,6 +420,8 @@ Recommended Reading: [Building a Team of Internal R Packages](https://emilyriede
 
 ::: column
 ### Ideas
+
+-   Reading/Process other CCC Files: SEA, VFS, SCFF, etc... 
 
 -   yccdTemplates *(project / analysis / report templates)*
 
@@ -346,6 +447,9 @@ Yosemite Community College District
 [millionc@yosemite.edu](mailto:millionc@yosemite.edu)
 
 ::: aside
-Slides were created with [Quarto](https://quarto.org/) and can be found here: <https://christian-million.github.io/comis_presentation/>
-Source Code: <https://github.com/christian-million/comis_presentation>
+Slides were created with [Quarto](https://quarto.org/): 
+
+Slide Deck: <https://christian-million.github.io/comis_presentation/>
+
+Presentation Source Code: <https://github.com/christian-million/comis_presentation>
 :::
