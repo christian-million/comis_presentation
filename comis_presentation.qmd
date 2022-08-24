@@ -79,9 +79,6 @@ Read and Format:
 - MIS __Referential__ Files
 
 :::
-
-
-
 :::
 
 # MIS Data: What and Why?
@@ -137,9 +134,9 @@ We want to analyze it!
 
 - Monitoring Student Success and Equity
 
-- Accountability
-    
-- Categorical Funding (EOPS, DSPS, Perkins, ...)
+- Legislative decisions
+
+- Categorical Funding (e.g., EOPS, DSPS, Perkins)
 
 - Student Centered Funding Formula
 
@@ -236,9 +233,12 @@ If you were to try to read in just two MIS submission files, it would look like 
 ## Before `comis`
 
 ``` r
+# Load Libraries -----
 library(dplyr)
 library(readr)
 
+
+# Define Names, Types, and Widths -----
 CB_col_names <- c('GI90', 'GI01','GI03', paste0("CB0",0:9), paste0("CB",10:27), "Filler")
 CB_col_types <- rep("c", length(CB_col_names))
 CB_col_width <- CB <- c(2,3,3,12,12,68,6,1,1,length(109:112),length(113:116),1,1,1,1,1,1,6,8,length(137:148),length(149:160),length(161:172),7,9,1,1,1,1,1,1,1,26)
@@ -247,16 +247,18 @@ XB_col_names <- c('GI90', 'GI01', 'GI03', 'GI02', 'CB01', paste0('XB0',0:9), 'XB
 XB_col_types <- rep("c", length(XB_col_names))
 XB_col_width <- c(2,3,3,3,12,6,1,6,6,1,length(44:47), length(48:51),1,1,1,1,length(56:61), 1, 12,7)
 
-CB_src <- readr::read_tsv("path/to/U59223CB.dat",
+# Read the source data -----
+CB_src <- readr::read_tsv("path/to/U59223CB.DAT",
                            col_names = CB_col_names,
                            col_types = CB_col_types,
                            trim_ws = TRUE)
                            
-XB_src <- readr::read_tsv("path/to/U59223XB.dat",
+XB_src <- readr::read_tsv("path/to/U59223XB.DAT",
                            col_names = CB_col_names, # copy / paste errors
                            col_types = XB_col_types,
                            trim_ws = TRUE)
 
+# Clean and Reformat Data -----
 CB <- CB_src |>
     mutate(dates = date_cleaning_code(),
            units = implicit_decimal_code())
@@ -277,10 +279,12 @@ You don't need to understand this code that doesn't run - what's important is th
 ## After `comis` {.incremental}
 
 ``` r
+# Load Libraries -----
 library(comis)
 
-CB <- read_sub("path/to/U59223CB.dat")
-XB <- read_sub("path/to/U59223XB.dat")
+# Read Data -----
+CB <- read_sub("path/to/U59223CB.DAT")
+XB <- read_sub("path/to/U59223XB.DAT")
 ```
 
 ::: notes
@@ -329,7 +333,7 @@ library(comis)
 read_sub(c("U59223CB.DAT", "U59217CB.DAT"))
 
 
-read_ref(c("CB217.txt", "CB223.DAT"))
+read_ref(c("CB217.txt", "CB223.txt"))
 ```
 :::
 
@@ -354,12 +358,10 @@ read_ref_repo("CB", "217")
 
 # Column names are words.
 # like "COLLEGE_ID", "COURSE_ID", "CONTROL_NUMBER"
-read_ref("CB", "217", desc = TRUE)
+read_ref_repo("CB", "217", desc = TRUE)
 ```
 :::
-
 :::
-
 :::
 
 
