@@ -81,9 +81,9 @@ Read and Format:
 :::
 :::
 
-# MIS Data: What and Why?
-
 ::: notes
+-   Sole purpose
+
 -   What are MIS files?
 
 -   Why are they useful?
@@ -93,72 +93,39 @@ Read and Format:
 -   MIS 101 - In order to better understand our specific institutions needs, we need a very brief intro to MIS
 :::
 
-## MIS 101 - Submission Files
+# MIS 101
 
-::: columns
-::: column
-Every term, someone at your college converts SIS data into `.DAT` files, using the file specs found in the [Data Element Dictionary](https://webdata.cccco.edu/ded/ded.htm).
+**Submission Files:** Districts submit MIS data to state via these files
 
-These are `submission` files.
-:::
+    - ~ 25 files | 396 elements
 
-::: column
-![](img/sub_file_dir.png)
-![](img/sub_file_example.png)
-:::
-:::
+<br>
+
+**Referential Files:** Districts retrieve these files from Data-On-Demand
+
+    - ~ 27 files | 406 elements
 
 
-## MIS 101 - Referential Files
+## The Challenge
 
-::: columns
+- MIS Data is important
 
-::: column
-After submission, colleges request `referential` files from the CCCCO.
+- We want to easily use it / analyze it
 
-
-These contain elements derived from submission files, explicit formatting, and additional student information.
-:::
-
-::: column
-![](img/ref_file_dir.png)
-![](img/ref_file_example.png)
-:::
-:::
-
-## MIS is Important Data
-
-We want to analyze it!
-
-### Uses
-
-- Monitoring Student Success and Equity
-
-- Legislative decisions
-
-- Categorical Funding (e.g., EOPS, DSPS, Perkins)
-
-- Student Centered Funding Formula
-
-- Research
-
-- ...
+- **The Challenge:** Reading the MIS data into R is difficult and error prone
 
 ::: notes
--   These are just some of the uses. We want to analyze it!
+-   We use it for research, accountability, funding, legislation...
 
 -   In order to use the data, we need to get into an analysis tool.
 
 -   Whether that's R / Excel / STATA / SPSS
 :::
 
-# The Challenge
-
 ## Submission Files - Challenges
 
 :::: columns
 ::: column
--   ~ 25 files | 396 elements
 
 -   Fixed Width Format
 
@@ -188,8 +155,6 @@ We want to analyze it!
 
 ## Referential Files - Challenges
 
--   ~ 27 files | 406 elements
-
 -   Tab Delimited :)
 
 -   No Column Names
@@ -210,6 +175,11 @@ We want to analyze it!
 
 ## Yikes
 
+Imagine writing code to handle this for each analysis:
+
+::: columns
+::: column
+
 -   A lot to re-remember
 
 -   Cognitively taxing to implement
@@ -217,6 +187,8 @@ We want to analyze it!
 -   Takes time
 
 -   Updates to multiple scripts
+:::
+::: column
 
 -   Copy / paste errors
 
@@ -225,7 +197,8 @@ We want to analyze it!
 -   Unfulfilling
 
 -   Lots of overhead before analysis can begin
-
+:::
+:::
 ::: notes
 If you were to try to read in just two MIS submission files, it would look like this:
 :::
@@ -398,41 +371,23 @@ Data Included: [top_codes](https://www.cccco.edu/-/media/CCCCO-Website/About-Us/
 
 -   Maintainable
 
--   Share code with others
+-   Easily share code with others
 
--   Documentation / Vignettes
+-   Business logic is located in one place
 
 ::: aside
 Recommended Reading: [Building a Team of Internal R Packages](https://emilyriederer.netlify.app/post/team-of-packages/)
 :::
 
-## Other "Internal" R Packages
+::: notes
+Think about what internal processes and procedures you could wrap into a package:
 
-::: columns
+- Database connections
 
-::: column
-### Examples
+- Reporting Templates
 
-- [DisImpact](https://CRAN.R-project.org/package=DisImpact) *("internal" to CCCCO)*
-
-- yccdDB *(creates and manages DB connections / queries)*
-
-- hub *(.Rmd/.Qmd storage and usage monitoring)*
+- Package to help with term math
 :::
-
-::: column
-### Ideas
-
--   Reading/Process other CCC Files: SEA, VFS, SCFF, etc... 
-
--   yccdTemplates *(project / analysis / report templates)*
-
--   yccdThemes *(branding graphs / reports)*
-
--   yccdTerms *(help with term math / formatting)*
-:::
-
-::::
 
 # Thanks!
 
@@ -449,7 +404,7 @@ Yosemite Community College District
 [millionc@yosemite.edu](mailto:millionc@yosemite.edu)
 
 ::: aside
-Slides were created with [Quarto](https://quarto.org/): 
+Slides were created with [Quarto](https://quarto.org/)
 
 Slide Deck: <https://christian-million.github.io/comis_presentation/>
 
